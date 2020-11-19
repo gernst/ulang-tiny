@@ -63,9 +63,46 @@ inductive
   0: Nat;
   n: Nat ==> n +1: Nat;
 
-coinductive
+coinductive // _: NatInf
   0: NatInf;
   n: NatInf ==> n +1: NatInf;
+
+assume k: Nat;
+show   k: NatInf;
+proof induction k: Nat;
+  // intern: zwei Fälle
+  case 0: Nat;
+    auto;
+  case n0 +1: Nat;
+    // normalization produces this state
+    // assume n0: Nat
+    // assume n0: NatInf (IH)
+    // assume n == n0 +1 (dropped)
+    // show   n0 +1: NatInf
+qed
+
+show   forall k. p k ==> k: NatInf;
+proof
+  // assume p k;
+  // show   k: NatInf;
+
+  lemma kjasdhgfd:
+  assume p z;
+  show k: Nat
+  proof
+    // show k: Nat
+  qed
+
+  // assume kjasdhgfd: p z ==> k: Nat
+  // show k: NatInf
+
+
+  use Nat_implies_NatInf;
+  intro;
+  // assume k == 0 ==> k: NatInf;
+  // assume forall k0. k == k0 + 1 /\ k0: NatInf ==> k: NatInf;
+  // assume k: Nat ==> k: NatInf;
+  // show   k: NatInf;
 
 assume k: Nat;
 show k < k +1;
