@@ -12,6 +12,7 @@ object Print {
   def print(name: String, args: List[Pretty], fixity: Fixity): String = (args, fixity) match {
     case (arg :: rest, _: Prefix) => "((" + name + " " + arg + ") " + rest.mkString(" ") + ")"
     case (arg :: rest, _: Postfix) => "((" + arg + " " + name + ") " + rest.mkString(" ") + ")"
+    case (arg1 :: arg2 :: Nil, _: Infix) => "(" + arg1 + " " + name + " " + arg2 + ")"
     case (arg1 :: arg2 :: rest, _: Infix) => "((" + arg1 + " " + name + " " + arg2 + ") " + rest.mkString(" ") + ")"
   }
 
@@ -53,7 +54,8 @@ object Print {
   }
 
   def print(any: Val): String = any match {
-    case Curry(fun, rargs, lex) => "[closure]"
+    // case Curry(fun, rargs, lex) => "[closure]"
+    case Curry(fun, rargs, lex) => "[" + (fun :: rargs.reverse).mkString(" ") + " in " + lex + " ]"
     case Defer(expr, lex) => "[" + expr + "]"
     case Objs(fun, args) => print(fun, args)
   }

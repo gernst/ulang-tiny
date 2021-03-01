@@ -1,0 +1,170 @@
+notation
+  : [infix 0];
+
+data :;
+
+eval
+  A /\ B;
+
+define
+  sorry p
+    := p: Prop;
+
+  triv
+    := True: Prop;
+
+  refl x
+    := Eq x x: Prop;
+
+  notI (p ==> False: Prop)
+    := not p: Prop;
+
+  andI (p: Prop) (q: Prop)
+    := p /\ q: Prop;
+
+  orI1 (p: Prop) q
+    := p \/ q: Prop;
+
+  orI2 p (q: Prop)
+    := p \/ q: Prop;
+
+  impI p f
+    := match (f (p: Prop)) with
+       (q: Prop) -> p ==> q: Prop;
+
+  exI f t p
+    := match (f t) p with
+       w (w: Prop) -> Ex f: Prop;
+
+  allI f p
+    := let z := fresh
+       in match (f z) (p z) with
+       w (w: Prop) -> All f: Prop;
+
+define
+  cong (Eq x y: Prop) p
+    := Eq (p x) (p y): Prop;
+
+  subst (Eq x y: Prop) p
+    := p x ==> p y: Prop;
+
+  absurd (False: Prop) q
+    := p: Prop;
+
+  notE (not p: Prop) (p: Prop)
+    := False: Prop;
+
+  andE1 (p /\ q: Prop)
+    := p: Prop;
+
+  andE2 (p /\ q: Prop)
+    := q: Prop;
+
+  orE (p \/ q: Prop) f g
+    := match (f (p: Prop)) (g (q: Prop))
+       with (r: Prop) (r: Prop) -> r: Prop;
+
+  mp (p ==> q: Prop) (p: Prop)
+    := q: Prop;
+
+  exE (Ex f: Prop) p
+    := let z := fresh
+       in p z (f z: Prop);
+
+  allE (All f: Prop) t
+    := f t: Prop;
+
+define
+  and_sym p q
+    := impI (p /\ q)
+       (lambda a ->
+          andI (andE2 a) (andE1 a));
+
+  or_sym p q
+    := impI (p \/ q)
+       (lambda a ->
+          orE a (lambda x -> orI2 q x)
+                (lambda x -> orI1 x p));
+
+  eq_sym x y
+    := impI (Eq x y)
+       (lambda a ->
+         mp (subst a (lambda z -> Eq z x))
+            (refl x));
+
+  eq_trans x y z
+    := impI (Eq x y)
+       (lambda a -> impI (Eq y z)
+         lambda b ->
+            mp (subst b (lambda y0 -> Eq x y0)) a
+            );
+
+eval
+  impI P
+       (lambda a -> a);
+
+  impI (P /\ Q)
+       (lambda a ->
+          andI (andE2 a) (andE1 a));
+
+  impI A
+    (lambda a -> impI B (lambda b -> a));
+
+  subst (Eq Y Z: Prop) (lambda y -> Eq X y);
+
+  (lambda x -> orI1 x Q) (P: Prop);
+  and_sym  P Q;
+  or_sym   P Q;
+  eq_sym   X Y;
+  eq_trans X Y Z;
+
+  impI (P T)
+    (lambda a -> exI P T a);
+
+  impI (All P)
+    (lambda a -> exI P T (allE a T));
+
+  impI (All P)
+    (lambda a -> allI P (lambda z -> allE a z));
+
+data 0 +1;
+notation
+  +1 [postfix 10];
+  +  [infix    9];
+
+define
+  1 := 0 +1;
+  2 := 1 +1;
+
+eval
+  1 + 2;
+
+define
+  nat_zero
+    := Nat 0: Prop;
+  nat_suc (Nat n: Prop)
+    := Nat (n +1): Prop;
+  
+  plus_base (Nat n: Prop)
+    := Eq (0 + n) n;
+  plus_base (Nat n: Prop) (Nat m: Prop)
+    := Eq ((m +1) + n) n;
+  
+  nat_cases (Nat n: Prop)
+    := Eq n 0 \/ Ex (lambda m -> Eq n (m +1)): Prop;
+
+  nat_induction (Nat n: Prop) p f g
+    := let m := fresh
+       in match (p 0)      f
+                (p (m +1)) (g m (p m: Prop))
+       with
+         z (z: Prop)
+         s (s: Prop) -> p n: Prop;
+
+eval
+  impI (Nat N)
+    (lambda a ->
+      nat_induction a
+      (lambda k -> Eq (k + 0) k)
+      (refl 0)
+      (lambda m h -> ));

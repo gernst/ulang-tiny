@@ -89,6 +89,8 @@ object Eval {
   def norm(expr: Expr, lex: Env): Norm = expr match {
     case Wildcard =>
       fail("wildcard in eval")
+    case Id("fresh", None) =>
+      Id("X", Some(Expr.nextIndex))
     case id: Id if isTag(id) =>
       id
     case id: Id if lex contains id =>
