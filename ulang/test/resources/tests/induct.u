@@ -3,6 +3,7 @@ notation +1 [postfix 10];
 
 show
   (forall p n. (n: Nat) ==> (p 0) ==> (forall m. (m: Nat) ==> p m ==> p (m +1)) ==> p n) ==>
+  GARBAGE
   (0: Nat) ==>
   (forall m. (m: Nat) ==> (m +1: Nat)) ==>
   (0: NatInf) ==>
